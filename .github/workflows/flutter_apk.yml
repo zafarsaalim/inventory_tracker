@@ -23,12 +23,11 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.19.0   # safer than 3.13.7
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Debug APK
+      - name: Build APK
         run: flutter build apk --debug
 
       - name: Upload APK
