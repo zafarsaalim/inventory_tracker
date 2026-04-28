@@ -47,6 +47,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
+          child: SingleChildScrollView(
           child: Column(
             children: [
               TextFormField(
@@ -67,6 +68,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 child: Text("Save"),
               ),
             ],
+          ),
           ),
         ),
       ),
