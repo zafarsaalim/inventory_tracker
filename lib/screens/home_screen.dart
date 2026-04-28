@@ -59,13 +59,13 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => AddItemScreen()),
-          );
-          refreshItems();
-        },
+        onPressed: () {
+  print("FAB clicked");
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => AddItemScreen()),
+  );
+},
         child: Icon(Icons.add),
       ),
     );
