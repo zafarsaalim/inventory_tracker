@@ -1,34 +1,43 @@
 name: Build Flutter APK
 
+# Trigger workflow on push to main
 on:
   push:
     branches:
       - main
+
+# Force Node.js 24 to avoid deprecation warnings
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repo
+      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Set up Flutter
+      # 2️⃣ Setup Flutter SDK
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.13.7'
 
       # 3️⃣ Install dependencies
-      - name: Install dependencies
+      - name: Install Flutter dependencies
         run: flutter pub get
 
-      # 4️⃣ Build release APK
-      - name: Build APK
-        run: flutter build apk --release
+      # 4️⃣ Run Flutter doctor for debug info
+      - name: Flutter Doctor
+        run: flutter doctor -v
 
-      # 5️⃣ Upload APK (v4)
+      # 5️⃣ Build release APK
+      - name: Build Release APK
+        run: flutter build apk --release --verbose
+
+      # 6️⃣ Upload APK artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
