@@ -1,4 +1,4 @@
-name: Build Flutter APK (Debug)
+name: Build Flutter APK
 
 on:
   push:
@@ -13,23 +13,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
+      # 2️⃣ Install Java JDK (required by Android)
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      # 3️⃣ Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.13.7'
 
-      - name: Install dependencies
+      # 4️⃣ Install Android SDK and tools
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 34
+          target: android-34
+          build-tools: 34.0.0
+          ndk: 25.2.9519653
+
+      # 5️⃣ Install dependencies
+      - name: Install Flutter dependencies
         run: flutter pub get
 
+      # 6️⃣ Flutter doctor for debug info
       - name: Flutter Doctor
         run: flutter doctor -v
 
+      # 7️⃣ Build debug APK
       - name: Build Debug APK
         run: flutter build apk --debug --verbose
 
+      # 8️⃣ Upload APK
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
