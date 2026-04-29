@@ -1,36 +1,40 @@
-name: Generate Flutter Project Structure
+name: Bootstrap Flutter App
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # manual trigger (recommended)
+  push:
+    branches: ["main"]
 
 jobs:
-  setup:
+  generate:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repo
-      - name: Checkout repository
+      # 1. Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Install Flutter with a stable version explicitly specified
-      - name: Install Flutter SDK
-        uses: flutter/flutter-action@v2
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.6'  # Specify the exact Flutter version here
+          channel: stable
 
-      # 3. Verify Flutter installation
-      - name: Verify Flutter installation
-        run: flutter doctor
+      # 3. Create Flutter app (only if not exists)
+      - name: Create project
+        run: |
+          if [ ! -d "lib" ]; then
+            flutter create .
+          fi
 
-      # 4. Generate Flutter project structure (android/ folder will be created)
-      - name: Generate Flutter project structure2
-        run: flutter create .
-
-      # 5. Commit generated project files back to the repo (including android/)
-      - name: Commit generated project files
+      # 4. Commit generated files
+      - name: Commit files
         run: |
           git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.email "github-actions@github.com"
           git add .
-          git commit -m "Generate Flutter project structure"
-          git push
+          git commit -m "Auto-generate Flutter project" || echo "No changes"
+
+      # 5. Push back to repo
+      - name: Push changes
+        run: git push
