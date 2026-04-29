@@ -1,43 +1,38 @@
-name: Bootstrap Flutter App
+name: Build APK (Lightweight)
 
 on:
-  workflow_dispatch:   # manual trigger (recommended)
+  workflow_dispatch:
   push:
     branches: ["main"]
 
-permissions:
-  contents: write
-
 jobs:
-  generate:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Setup Flutter
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      # 3. Create Flutter app (only if not exists)
-      - name: Create project
-        run: |
-          if [ ! -d "lib" ]; then
-            flutter create .
-          fi
+      - name: Install dependencies
+        run: flutter pub get
 
-      # 4. Commit generated files
-      - name: Commit files
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add .
-          git commit -m "Auto-generate Flutter project" || echo "No changes"
+      # 🟢 LIGHTWEIGHT BUILD (your requirement)
+      - name: Build APK (fast profile build)
+        run: flutter build apk --profile --split-per-abi
 
-      # 5. Push back to repo
-      - name: Push changes
-        run: git push
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory-apk
+          path: build/app/outputs/flutter-apk/*.apk
