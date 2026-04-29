@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' aa p;
 
 void main() {
   runApp(const MyApp());
@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> initDB() async {
-    final path = join(await getDatabasesPath(), 'inventory.db');
+    final path = p.join(await getDatabasesPath(), 'inventory.db');
 
     db = await openDatabase(
       path,
