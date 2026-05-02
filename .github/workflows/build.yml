@@ -1,0 +1,16 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ "python-version" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build APK
+        uses: digreatbrian/buildozer-action@v1
