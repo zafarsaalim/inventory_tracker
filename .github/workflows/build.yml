@@ -23,7 +23,7 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Install system deps
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -33,27 +33,27 @@ jobs:
             libtinfo6 \
             cmake libffi-dev libssl-dev
 
-      - name: Install Android SDK cmdline-tools
+      # 🔥 OLD SDK (required for buildozer compatibility)
+      - name: Install Android SDK (old tools)
         run: |
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          cd $HOME/android-sdk/cmdline-tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O tools.zip
+          mkdir -p $HOME/android-sdk/tools
+          cd $HOME/android-sdk/tools
+          wget https://dl.google.com/android/repository/tools_r25.2.5-linux.zip -O tools.zip
           unzip tools.zip
-          mv cmdline-tools latest
 
-      - name: Set Android env
+      - name: Set Android environment
         run: |
           echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
+          echo "PATH=$HOME/android-sdk/tools/bin:$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
 
       - name: Accept licenses
-        run: yes | sdkmanager --licenses
+        run: yes | sdkmanager --licenses || true
 
       - name: Install SDK packages
         run: |
           sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-      - name: Install build tools
+      - name: Install Python build tools
         run: |
           pip install --upgrade pip
           pip install Cython==0.29.33 virtualenv buildozer
@@ -65,4 +65,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: bin/*.apk
+          path: bin/*.apk/
