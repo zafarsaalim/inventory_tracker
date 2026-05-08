@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - python-version
 
 jobs:
   build-apk:
