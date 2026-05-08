@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' aa p;
+import 'package:path/path.dart' as p;
 
 void main() {
   runApp(const MyApp());
@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> loadItems() async {
+    if (db == null) return;
     final data = await db!.query('items');
     setState(() {
       items = data.map((e) => Item.fromMap(e)).toList();
@@ -90,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> addItem() async {
+    if (db == null) return;
     final name = nameController.text.trim();
     final qty = int.tryParse(qtyController.text) ?? 0;
 
@@ -107,11 +109,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> deleteItem(int id) async {
+    if (db == null) return;
     await db!.delete('items', where: 'id = ?', whereArgs: [id]);
     loadItems();
   }
 
   Future<void> updateItem(Item item) async {
+    if (db == null) return;
     await db!.update(
       'items',
       item.toMap(),
