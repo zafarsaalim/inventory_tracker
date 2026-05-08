@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Tracker</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        input { margin: 5px; }
+        button { margin: 5px; }
+        table { border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+        .low { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+<h2>Inventory Tracker</h2>
+
+<input type="text" id="itemName" placeholder="Item name">
+<input type="number" id="itemQty" placeholder="Quantity">
+<button onclick="addItem()">Add Item</button>
+
+<table id="itemTable">
+    <thead>
+        <tr>
+            <th>ID</th><th>Name</th><th>Qty</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+function addItem() {
+    var name = document.getElementById("itemName").value;
+    var qty = parseInt(document.getElementById("itemQty").value);
+    if (!name || isNaN(qty)) {
+        alert("Please enter name and quantity");
+        return;
+    }
+    Android.addItem(name, qty);
+    alert("Added: " + name + " Qty: " + qty);
+    loadItems();
+}
+
+function loadItems() {
+    var dataStr = Android.getItems();
+    var table = document.getElementById("itemTable").getElementsByTagName('tbody')[0];
+    table.innerHTML = "";
+    if (!dataStr) return;
+    var data = JSON.parse(dataStr.replace(/'/g,'"')); // convert Kotlin list string to JS array
+
+    data.forEach(item => {
+        var row = table.insertRow();
+        row.insertCell(0).innerText = item.id;
+        row.insertCell(1).innerText = item.name;
+        row.insertCell(2).innerHTML = (item.qty < 5 ? '<span class="low">'+item.qty+'</span>' : item.qty);
+        var actions = row.insertCell(3);
+        actions.innerHTML = `<button onclick="editItem(${item.id})">Edit</button>
+                             <button onclick="deleteItem(${item.id})">Delete</button>`;
+    });
+}
+
+function editItem(id) {
+    var newName = prompt("Enter new name");
+    var newQty = parseInt(prompt("Enter new quantity"));
+    if (!newName || isNaN(newQty)) return;
+    Android.updateItem(id, newName, newQty);
+    loadItems();
+}
+
+function deleteItem(id) {
+    if (!confirm("Delete item?")) return;
+    Android.deleteItem(id);
+    loadItems();
+}
+
+// Initial load
+loadItems();
+</script>
+</body>
+</html>
