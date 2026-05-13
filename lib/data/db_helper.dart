@@ -66,4 +66,15 @@ class DBHelper {
     }
     return null;
   }
+
+  static Future<int> updateQuantity(int id, int quantity) async {
+    final dbClient = await db;
+
+    return dbClient.update(
+      'items',
+      {'quantity': quantity},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
