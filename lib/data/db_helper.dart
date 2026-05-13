@@ -40,6 +40,17 @@ class DBHelper {
     return dbClient.insert('items', item.toMap());
   }
 
+  static Future<int> updateItem(Item item) async {
+    final dbClient = await db;
+
+    return await dbClient.update(
+      'items',
+      item.toMap(),
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
+  }
+
   static Future<List<Item>> getItems() async {
     final dbClient = await db;
     final result = await dbClient.query('items');

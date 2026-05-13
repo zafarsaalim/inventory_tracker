@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'barcode_scanner.dart';
 import '../data/db_helper.dart';
-class AddItemSheet extends StatefulWidget {
-  final Function(Map<String, dynamic> item) onSave;
+import '../models/item.dart';
 
-  const AddItemSheet({super.key, required this.onSave});
+class AddItemSheet extends StatefulWidget {
+  final Function(Map<String, dynamic>) onSave;
+  final Item? existingItem;
+
+  const AddItemSheet({super.key, required this.onSave, this.existingItem});
 
   @override
   State<AddItemSheet> createState() => _AddItemSheetState();
@@ -17,7 +20,24 @@ class _AddItemSheetState extends State<AddItemSheet> {
   final barcodeController = TextEditingController();
   final costController = TextEditingController();
   final sellingController = TextEditingController();
+  //
+  @override
+  void initState() {
+    super.initState();
 
+    if (widget.existingItem != null) {
+      final item = widget.existingItem!;
+
+      nameController.text = item.name;
+      qtyController.text = item.quantity.toString();
+      categoryController.text = item.category;
+      barcodeController.text = item.barcode ?? "";
+      costPriceController.text = item.costPrice?.toString() ?? "";
+      sellingPriceController.text = item.sellingPrice?.toString() ?? "";
+    }
+  }
+
+  //
   void submit() {
     final item = {
       "name": nameController.text.trim(),
@@ -92,14 +112,14 @@ class _AddItemSheetState extends State<AddItemSheet> {
                             updatedQty,
                           );
 
-                          Navigator.pop(context);
+                          //Navigator.pop(context);
                         } else {
                           // CASE 2: NEW ITEM → just fill form
                           setState(() {
                             barcodeController.text = code;
                           });
 
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
                         }
                       },
                     ),

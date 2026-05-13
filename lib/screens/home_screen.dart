@@ -26,56 +26,32 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
-  void showAddSheet() {
-    final nameController = TextEditingController();
-    final qtyController = TextEditingController();
-    final categoryController = TextEditingController();
-
+  void openAddSheet([Item? existingItem]) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (_) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-              ),
-              TextField(
-                controller: qtyController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Quantity'),
-              ),
-              TextField(
-                controller: categoryController,
-                decoration: const InputDecoration(labelText: 'Category'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  final item = Item(
-                    name: nameController.text,
-                    quantity: int.tryParse(qtyController.text) ?? 0,
-                    category: categoryController.text,
-                    createdAt: DateTime.now().toIso8601String(),
-                  );
+        return AddItemSheet(
+          onSave: (item) async {
+            final newItem = Item(
+              id: existingItem?.id,
+              name: item["name"],
+              quantity: item["quantity"],
+              category: item["category"],
+              barcode: item["barcode"],
+              costPrice: item["costPrice"],
+              sellingPrice: item["sellingPrice"],
+              createdAt: item["createdAt"],
+            );
 
-                  await DBHelper.insertItem(item);
-                  Navigator.pop(context);
-                  loadItems();
-                },
-                child: const Text("Save Item"),
-              ),
-            ],
-          ),
+            if (existingItem != null) {
+              await DBHelper.updateItem(newItem);
+            } else {
+              await DBHelper.insertItem(newItem);
+            }
+
+            loadItems();
+          },
         );
       },
     );
@@ -86,41 +62,24 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Inventory")),
       body: items.isEmpty
-          ? EmptyInventory(onAdd: showAddSheet)
+          ? EmptyInventory(onAdd: openAddSheet)
           : ListView.builder(
               itemCount: items.length,
               itemBuilder: (_, index) {
-                return ItemCard(item: items[index]);
+                return ItemCard(
+                  item: items[index],
+                  onTap: () {
+                    openAddSheet(items[index]);
+                  },
+                );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (_) {
-              return AddItemSheet(
-                onSave: (item) async {
-                  await DBHelper.insertItem(
-                    Item(
-                      name: item["name"],
-                      quantity: item["quantity"],
-                      category: item["category"],
-                      barcode: item["barcode"],
-                      costPrice: item["costPrice"],
-                      sellingPrice: item["sellingPrice"],
-                      createdAt: item["createdAt"],
-                    ),
-                  );
-
-                  loadItems();
-                },
-              );
-            },
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: items.isNotEmpty
+          ? FloatingActionButton(
+              onPressed: openAddSheet,
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
