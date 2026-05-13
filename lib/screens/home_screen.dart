@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isScrollControlled: true,
       builder: (_) {
         return AddItemSheet(
+          existingItem: existingItem,
           onSave: (item) async {
             final newItem = Item(
               id: existingItem?.id,
