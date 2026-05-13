@@ -18,8 +18,8 @@ class _AddItemSheetState extends State<AddItemSheet> {
   final qtyController = TextEditingController();
   final categoryController = TextEditingController();
   final barcodeController = TextEditingController();
-  final costController = TextEditingController();
-  final sellingController = TextEditingController();
+  final costPriceController = TextEditingController();
+  final sellingPriceController = TextEditingController();
   //
   @override
   void initState() {
@@ -47,13 +47,13 @@ class _AddItemSheetState extends State<AddItemSheet> {
           : categoryController.text.trim(),
       "barcode": barcodeController.text.trim().isEmpty
           ? null
-          : barcodeController.text,
-      "costPrice": costController.text.isEmpty
+          : barcodeController.text.trim(),
+      "costPrice": costPriceController.text.isEmpty
           ? null
-          : double.tryParse(costController.text),
-      "sellingPrice": sellingController.text.isEmpty
+          : double.tryParse(costPriceController.text),
+      "sellingPrice": sellingPriceController.text.isEmpty
           ? null
-          : double.tryParse(sellingController.text),
+          : double.tryParse(sellingPriceController.text),
       "createdAt": DateTime.now().toIso8601String(),
     };
 
@@ -139,13 +139,13 @@ class _AddItemSheetState extends State<AddItemSheet> {
             ),
 
             TextField(
-              controller: costController,
+              controller: costPriceController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: "Cost Price"),
             ),
 
             TextField(
-              controller: sellingController,
+              controller: sellingPriceController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: "Selling Price"),
             ),
