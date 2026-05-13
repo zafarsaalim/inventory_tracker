@@ -3,7 +3,7 @@ name: Build APK (Lightweight)
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: ["main", "barcode-scan-feature"]
 
 jobs:
   build:
