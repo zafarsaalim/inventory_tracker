@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../data/db_helper.dart';
+import '../helpers/open_add_sheet.dart';
 import '../models/item.dart';
-import '../widgets/empty_inventory.dart';
-import '../widgets/item_card.dart';
-import '../widgets/add_item_sheet.dart';
+import 'home_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,64 +23,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> loadItems() async {
     items = await DBHelper.getItems();
+
     setState(() {});
   }
 
-  void openAddSheet([Item? existingItem]) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) {
-        return AddItemSheet(
-          existingItem: existingItem,
-          onSave: (item) async {
-            final newItem = Item(
-              id: existingItem?.id,
-              name: item["name"],
-              quantity: item["quantity"],
-              category: item["category"],
-              barcode: item["barcode"],
-              costPrice: item["costPrice"],
-              sellingPrice: item["sellingPrice"],
-              createdAt: item["createdAt"],
-            );
-
-            if (existingItem != null) {
-              await DBHelper.updateItem(newItem);
-            } else {
-              await DBHelper.insertItem(newItem);
-            }
-
-            loadItems();
-          },
-        );
-      },
+  void handleAdd([Item? item]) {
+    openAddSheet(
+      context:: context,
+      existingItem: item,
+      onSaved: loadItems,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Inventory")),
-      body: items.isEmpty
-          ? EmptyInventory(onAdd: openAddSheet)
-          : ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (_, index) {
-                return ItemCard(
-                  item: items[index],
-                  onTap: () {
-                    openAddSheet(items[index]);
-                  },
-                );
-              },
-            ),
-      floatingActionButton: items.isNotEmpty
-          ? FloatingActionButton(
-              onPressed: openAddSheet,
-              child: const Icon(Icons.add),
-            )
-          : null,
+    return HomeView(
+      items: items,
+      onAdd: handleAdd,
+      onEdit: handleAdd,
     );
   }
 }
