@@ -103,7 +103,7 @@ class _OrderScreenState extends State<OrderScreen> {
         orderId: orderId,
         itemId: item.item.id!,
         name: item.item.name,
-        price: item.item.sellingPrice.toInt(),
+        price: (item.item.sellingPrice ?? 0).toInt(),
         quantity: item.quantity,
       );
 
@@ -174,10 +174,10 @@ class _OrderScreenState extends State<OrderScreen> {
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
-                          ElevatedButton(
-                            onPressed: basket.isEmpty ? null : saveOrder,
-                            child: const Text("Save Order"),
-                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: basket.isEmpty ? null : saveOrder,
+                          child: const Text("Save Order"),
                         ),
                       ],
                     ),
