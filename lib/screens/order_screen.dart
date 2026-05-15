@@ -21,19 +21,26 @@ class _OrderScreenState extends State<OrderScreen> {
   final TextEditingController searchController = TextEditingController();
 
   List<Item> items = [];
-
   List<OrderItem> basket = [];
+  List<Order> orders = [];
 
   @override
   void initState() {
     super.initState();
 
     loadItems();
-
+    loadOrders();
     searchController.addListener(() {
       if (mounted) {
         setState(() {});
       }
+    });
+  }
+
+  Future<void> loadOrders() async {
+    final dbOrders = await DBHelper.getOrders();
+    setState(() {
+      orders = dbOrders.map((o) => Order.fromMap(o)).toList();
     });
   }
 
@@ -121,12 +128,14 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget build(BuildContext context) {
     final query = searchController.text.toLowerCase();
 
-    final filteredItems = items.where((item) {
-      return item.name.toLowerCase().contains(query);
-    }).toList();
+    final filteredItems = query.isEmpty
+        ? [] // show nothing if search query is empty
+        : items.where((item) {
+            return item.name.toLowerCase().contains(query);
+          }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Record Order")),
+      appBar: AppBar(title: const Text("Orders")),
 
       body: Column(
         children: [
@@ -185,7 +194,27 @@ class _OrderScreenState extends State<OrderScreen> {
                 ],
               ),
             ),
-
+          Expanded(
+            child: orders.isEmpty
+                ? const Center(
+                    child: Text(
+                      "No orders recorded yet",
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      final order = orders[index];
+                      return ListTile(
+                        title: Text("Order #${order.id}"),
+                        subtitle: Text(
+                          "Total: ₹${order.total} • Date: ${order.createdAt.toLocal().toString().split('.')[0]}",
+                        ),
+                      );
+                    },
+                  ),
+          ),
           Expanded(
             child: filteredItems.isEmpty
                 ? const OrderEmptyState()
