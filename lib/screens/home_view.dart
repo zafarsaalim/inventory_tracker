@@ -28,15 +28,11 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final filteredItems = widget.items.where((item) {
-      return item.name
-          .toLowerCase()
-          .contains(search.toLowerCase());
+      return item.name.toLowerCase().contains(search.toLowerCase());
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Inventory"),
-      ),
+      appBar: AppBar(title: const Text("Inventory")),
 
       body: widget.items.isEmpty
           ? EmptyInventory(onAdd: widget.onAdd)
@@ -50,24 +46,18 @@ class _HomeViewState extends State<HomeView> {
                   },
                 ),
 
-                InventorySummary(
-                  items: widget.items,
-                ),
+                InventorySummary(items: widget.items),
 
                 Expanded(
                   child: filteredItems.isEmpty
-                      ? const Center(
-                          child: Text("No matching items"),
-                        )
+                      ? const Center(child: Text("No matching items"))
                       : ListView.builder(
                           itemCount: filteredItems.length,
                           itemBuilder: (_, index) {
                             return ItemCard(
                               item: filteredItems[index],
 
-                              onTap: () => widget.onEdit(
-                                filteredItems[index],
-                              ),
+                              onTap: () => widget.onEdit(filteredItems[index]),
                             );
                           },
                         ),

@@ -17,10 +17,7 @@ class OrderBasketItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 5,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
 
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -29,8 +26,7 @@ class OrderBasketItem extends StatelessWidget {
           children: [
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
                   Text(
@@ -44,31 +40,20 @@ class OrderBasketItem extends StatelessWidget {
 
                   const SizedBox(height: 4),
 
-                  Text(
-                    "₹${orderItem.item.sellingPrice ?? 0}",
-                  ),
+                  Text("₹${orderItem.item.sellingPrice ?? 0}"),
                 ],
               ),
             ),
 
-            IconButton(
-              onPressed: onDecrease,
-              icon: const Icon(Icons.remove),
-            ),
+            IconButton(onPressed: onDecrease, icon: const Icon(Icons.remove)),
 
             Text(
               orderItem.quantity.toString(),
 
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
 
-            IconButton(
-              onPressed: onIncrease,
-              icon: const Icon(Icons.add),
-            ),
+            IconButton(onPressed: onIncrease, icon: const Icon(Icons.add)),
 
             SizedBox(
               width: 70,
@@ -78,9 +63,7 @@ class OrderBasketItem extends StatelessWidget {
 
                 textAlign: TextAlign.end,
 
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],

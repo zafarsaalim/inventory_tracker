@@ -7,18 +7,13 @@ class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
 
   @override
-  State<MainNavigation> createState() =>
-      _MainNavigationState();
+  State<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState
-    extends State<MainNavigation> {
+class _MainNavigationState extends State<MainNavigation> {
   int currentIndex = 0;
 
-  final pages = const [
-    HomeScreen(),
-    OrderScreen(),
-  ];
+  final pages = const [HomeScreen(), OrderScreen()];
 
   @override
   Widget build(BuildContext context) {

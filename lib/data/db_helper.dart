@@ -19,18 +19,37 @@ class DBHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE items (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            barcode TEXT,
-            quantity INTEGER,
-            costPrice REAL,
-            sellingPrice REAL,
-            category TEXT,
-            minStockLevel INTEGER,
-            createdAt TEXT
-          )
-        ''');
+    CREATE TABLE items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      barcode TEXT,
+      quantity INTEGER,
+      costPrice REAL,
+      sellingPrice REAL,
+      category TEXT,
+      minStockLevel INTEGER,
+      createdAt TEXT
+    )
+  ''');
+
+        await db.execute('''
+    CREATE TABLE orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      total INTEGER,
+      createdAt TEXT
+    )
+  ''');
+
+        await db.execute('''
+    CREATE TABLE order_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId INTEGER,
+      itemId INTEGER,
+      name TEXT,
+      price INTEGER,
+      quantity INTEGER
+    )
+  ''');
       },
     );
   }
@@ -87,5 +106,38 @@ class DBHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  static Future<int> createOrder(int total) async {
+    final dbClient = await db;
+
+    return dbClient.insert('orders', {
+      'total': total,
+      'createdAt': DateTime.now().toIso8601String(),
+    });
+  }
+
+  static Future<void> insertOrderItem({
+    required int orderId,
+    required int itemId,
+    required String name,
+    required int price,
+    required int quantity,
+  }) async {
+    final dbClient = await db;
+
+    await dbClient.insert('order_items', {
+      'orderId': orderId,
+      'itemId': itemId,
+      'name': name,
+      'price': price,
+      'quantity': quantity,
+    });
+  }
+
+  static Future<List<Map<String, dynamic>>> getOrders() async {
+    final dbClient = await db;
+
+    return dbClient.query('orders', orderBy: 'id DESC');
   }
 }

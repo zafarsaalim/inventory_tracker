@@ -10,20 +10,13 @@ class OrderEmptyState extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
 
         children: const [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 70,
-            color: Colors.grey,
-          ),
+          Icon(Icons.receipt_long_outlined, size: 70, color: Colors.grey),
 
           SizedBox(height: 16),
 
           Text(
             "No products added yet",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
 
           SizedBox(height: 8),

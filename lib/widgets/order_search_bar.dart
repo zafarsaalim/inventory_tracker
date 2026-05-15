@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class OrderSearchBar extends StatelessWidget {
   final TextEditingController controller;
 
-  const OrderSearchBar({
-    super.key,
-    required this.controller,
-  });
+  const OrderSearchBar({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +18,7 @@ class OrderSearchBar extends StatelessWidget {
 
           prefixIcon: const Icon(Icons.search),
 
-          suffixIcon: const Icon(
-            Icons.qr_code_scanner,
-          ),
+          suffixIcon: const Icon(Icons.qr_code_scanner),
 
           filled: true,
           fillColor: Colors.white,

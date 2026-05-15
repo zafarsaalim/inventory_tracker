@@ -14,13 +14,11 @@ class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
 
   @override
-  State<OrderScreen> createState() =>
-      _OrderScreenState();
+  State<OrderScreen> createState() => _OrderScreenState();
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   List<Item> items = [];
 
@@ -33,7 +31,9 @@ class _OrderScreenState extends State<OrderScreen> {
     loadItems();
 
     searchController.addListener(() {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -45,24 +45,31 @@ class _OrderScreenState extends State<OrderScreen> {
 
   void addToBasket(Item item) {
     final existingIndex = basket.indexWhere(
-      (orderItem) =>
-          orderItem.item.id == item.id,
+      (orderItem) => orderItem.item.id == item.id,
     );
 
     setState(() {
       if (existingIndex >= 0) {
-        basket[existingIndex].quantity++;
+        final currentQty = basket[existingIndex].quantity;
+
+        if (currentQty < item.quantity) {
+          basket[existingIndex].quantity++;
+        }
       } else {
-        basket.add(
-          OrderItem(item: item),
-        );
+        if (item.quantity > 0) {
+          basket.add(OrderItem(item: item, quantity: 1));
+        }
       }
     });
   }
 
   void increaseQty(int index) {
     setState(() {
-      basket[index].quantity++;
+      final item = basket[index];
+
+      if (item.quantity < item.item.quantity) {
+        item.quantity++;
+      }
     });
   }
 
@@ -86,63 +93,69 @@ class _OrderScreenState extends State<OrderScreen> {
     return total;
   }
 
+  Future<void> saveOrder() async {
+    if (basket.isEmpty) return;
+
+    final orderId = await DBHelper.createOrder(subtotal);
+
+    for (final item in basket) {
+      await DBHelper.insertOrderItem(
+        orderId: orderId,
+        itemId: item.item.id!,
+        name: item.item.name,
+        price: item.item.sellingPrice.toInt(),
+        quantity: item.quantity,
+      );
+
+      final newQty = item.item.quantity - item.quantity;
+
+      await DBHelper.updateQuantity(item.item.id!, newQty);
+    }
+
+    setState(() {
+      basket.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final query =
-        searchController.text.toLowerCase();
+    final query = searchController.text.toLowerCase();
 
     final filteredItems = items.where((item) {
-      return item.name
-          .toLowerCase()
-          .contains(query);
+      return item.name.toLowerCase().contains(query);
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Record Order"),
-      ),
+      appBar: AppBar(title: const Text("Record Order")),
 
       body: Column(
         children: [
-          OrderSearchBar(
-            controller: searchController,
-          ),
+          OrderSearchBar(controller: searchController),
 
           if (basket.isNotEmpty)
             Container(
-              padding: const EdgeInsets.only(
-                top: 4,
-                bottom: 4,
-              ),
+              padding: const EdgeInsets.only(top: 4, bottom: 4),
 
               child: Column(
                 children: [
-                  ...List.generate(
-                    basket.length,
-                    (index) {
-                      return OrderBasketItem(
-                        orderItem: basket[index],
+                  ...List.generate(basket.length, (index) {
+                    return OrderBasketItem(
+                      orderItem: basket[index],
 
-                        onIncrease: () =>
-                            increaseQty(index),
+                      onIncrease: () => increaseQty(index),
 
-                        onDecrease: () =>
-                            decreaseQty(index),
-                      );
-                    },
-                  ),
+                      onDecrease: () => decreaseQty(index),
+                    );
+                  }),
 
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
 
                     child: Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment
-                              .spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                       children: [
                         const Text(
@@ -150,8 +163,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
                           style: TextStyle(
                             fontSize: 18,
-                            fontWeight:
-                                FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
 
@@ -160,8 +172,11 @@ class _OrderScreenState extends State<OrderScreen> {
 
                           style: const TextStyle(
                             fontSize: 20,
-                            fontWeight:
-                                FontWeight.bold,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          ElevatedButton(
+                            onPressed: basket.isEmpty ? null : saveOrder,
+                            child: const Text("Save Order"),
                           ),
                         ),
                       ],
@@ -172,31 +187,21 @@ class _OrderScreenState extends State<OrderScreen> {
             ),
 
           Expanded(
-            child: query.isEmpty
+            child: filteredItems.isEmpty
                 ? const OrderEmptyState()
-                : filteredItems.isEmpty
-                    ? const Center(
-                        child: Text(
-                          "No matching products",
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount:
-                            filteredItems.length,
+                : ListView.builder(
+                    itemCount: filteredItems.length,
+                    itemBuilder: (_, index) {
+                      final item = filteredItems[index];
 
-                        itemBuilder: (_, index) {
-                          final item =
-                              filteredItems[index];
-
-                          return OrderProductTile(
-                            item: item,
-
-                            onTap: () {
-                              addToBasket(item);
-                            },
-                          );
+                      return OrderProductTile(
+                        item: item,
+                        onTap: () {
+                          addToBasket(item);
                         },
-                      ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

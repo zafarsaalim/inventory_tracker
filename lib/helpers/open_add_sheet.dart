@@ -17,10 +17,7 @@ void openAddSheet({
         existingItem: existingItem,
 
         onSave: (item) async {
-          await ItemService.saveItem(
-            item: item,
-            existingItem: existingItem,
-          );
+          await ItemService.saveItem(item: item, existingItem: existingItem);
 
           onSaved();
         },

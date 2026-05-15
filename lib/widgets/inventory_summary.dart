@@ -4,19 +4,13 @@ import '../models/item.dart';
 class InventorySummary extends StatelessWidget {
   final List<Item> items;
 
-  const InventorySummary({
-    super.key,
-    required this.items,
-  });
+  const InventorySummary({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
     final int totalProducts = items.length;
 
-    final int totalUnits = items.fold(
-      0,
-      (sum, item) => sum + item.quantity,
-    );
+    final int totalUnits = items.fold(0, (sum, item) => sum + item.quantity);
 
     final int lowStock = items.where((item) {
       final min = item.minStockLevel ?? 5;
@@ -25,10 +19,7 @@ class InventorySummary extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 14,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -44,25 +35,18 @@ class InventorySummary extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStat(
-            "Products",
-            totalProducts.toString(),
-          ),
+          _buildStat("Products", totalProducts.toString()),
 
           _divider(),
 
-          _buildStat(
-            "In Stock",
-            totalUnits.toString(),
-          ),
+          _buildStat("In Stock", totalUnits.toString()),
 
           _divider(),
 
           _buildStat(
             "Low Stock",
             lowStock.toString(),
-            valueColor:
-                lowStock > 0 ? Colors.orange : Colors.green,
+            valueColor: lowStock > 0 ? Colors.orange : Colors.green,
           ),
         ],
       ),
@@ -70,18 +54,10 @@ class InventorySummary extends StatelessWidget {
   }
 
   Widget _divider() {
-    return Container(
-      width: 1,
-      height: 36,
-      color: Colors.grey.shade300,
-    );
+    return Container(width: 1, height: 36, color: Colors.grey.shade300);
   }
 
-  Widget _buildStat(
-    String label,
-    String value, {
-    Color? valueColor,
-  }) {
+  Widget _buildStat(String label, String value, {Color? valueColor}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -96,12 +72,7 @@ class InventorySummary extends StatelessWidget {
 
         const SizedBox(height: 4),
 
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.grey,
-          ),
-        ),
+        Text(label, style: const TextStyle(color: Colors.grey)),
       ],
     );
   }

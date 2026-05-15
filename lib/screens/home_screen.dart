@@ -28,19 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void handleAdd([Item? item]) {
-    openAddSheet(
-      context: context,
-      existingItem: item,
-      onSaved: loadItems,
-    );
+    openAddSheet(context: context, existingItem: item, onSaved: loadItems);
   }
 
   @override
   Widget build(BuildContext context) {
-    return HomeView(
-      items: items,
-      onAdd: handleAdd,
-      onEdit: handleAdd,
-    );
+    return HomeView(items: items, onAdd: handleAdd, onEdit: handleAdd);
   }
 }
