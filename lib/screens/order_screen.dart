@@ -9,7 +9,6 @@ import '../widgets/order_basket_item.dart';
 import '../widgets/order_empty_state.dart';
 import '../widgets/order_product_tile.dart';
 import '../widgets/order_search_bar.dart';
-import '../widgets/order_basket_panel.dart';
 import '../widgets/order_basket_panel_content.dart';
 import '../widgets/order_list_view.dart';
 
