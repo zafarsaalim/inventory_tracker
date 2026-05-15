@@ -9,25 +9,25 @@ import '../widgets/order_basket_item.dart';
 import '../widgets/order_empty_state.dart';
 import '../widgets/order_product_tile.dart';
 import '../widgets/order_search_bar.dart';
+import '../widgets/order_basket_panel.dart';
+import '../widgets/order_basket_panel_content.dart';
+import '../widgets/order_list_view.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
-
   @override
   State<OrderScreen> createState() => _OrderScreenState();
 }
 
 class _OrderScreenState extends State<OrderScreen> {
   final TextEditingController searchController = TextEditingController();
-
   List<Item> items = [];
   List<OrderItem> basket = [];
   List<Order> orders = [];
-
+  bool isCreatingOrder = false;
   @override
   void initState() {
     super.initState();
-
     loadItems();
     loadOrders();
     searchController.addListener(() {
@@ -46,7 +46,6 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Future<void> loadItems() async {
     items = await DBHelper.getItems();
-
     setState(() {});
   }
 
@@ -73,7 +72,6 @@ class _OrderScreenState extends State<OrderScreen> {
   void increaseQty(int index) {
     setState(() {
       final item = basket[index];
-
       if (item.quantity < item.item.quantity) {
         item.quantity++;
       }
@@ -100,6 +98,16 @@ class _OrderScreenState extends State<OrderScreen> {
     return total;
   }
 
+  List<Item> get filteredProducts {
+    final query = searchController.text.toLowerCase();
+
+    if (query.isEmpty) return [];
+
+    return items.where((item) {
+      return item.name.toLowerCase().contains(query);
+    }).toList();
+  }
+
   Future<void> saveOrder() async {
     if (basket.isEmpty) return;
 
@@ -113,124 +121,63 @@ class _OrderScreenState extends State<OrderScreen> {
         price: (item.item.sellingPrice ?? 0).toInt(),
         quantity: item.quantity,
       );
-
       final newQty = item.item.quantity - item.quantity;
-
       await DBHelper.updateQuantity(item.item.id!, newQty);
     }
 
     setState(() {
       basket.clear();
+      isCreatingOrder = false;
+      searchController.clear();
     });
+    await loadOrders();
   }
 
   @override
   Widget build(BuildContext context) {
     final query = searchController.text.toLowerCase();
-
-    final filteredItems = query.isEmpty
-        ? [] // show nothing if search query is empty
-        : items.where((item) {
-            return item.name.toLowerCase().contains(query);
-          }).toList();
-
     return Scaffold(
       appBar: AppBar(title: const Text("Orders")),
-
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            isCreatingOrder = true;
+            searchController.clear();
+          });
+        },
+        child: Icon(isCreatingOrder ? Icons.shopping_cart : Icons.add),
+      ),
       body: Column(
         children: [
-          OrderSearchBar(controller: searchController),
-
-          if (basket.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.only(top: 4, bottom: 4),
-
-              child: Column(
-                children: [
-                  ...List.generate(basket.length, (index) {
-                    return OrderBasketItem(
-                      orderItem: basket[index],
-
-                      onIncrease: () => increaseQty(index),
-
-                      onDecrease: () => decreaseQty(index),
-                    );
-                  }),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        const Text(
-                          "Subtotal",
-
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+          Column(
+            children: [
+              OrderSearchBar(controller: searchController),
+              if (isCreatingOrder)
+                Column(
+                  children: filteredProducts
+                      .map(
+                        (item) => ListTile(
+                          title: Text(item.name),
+                          onTap: () {
+                            addToBasket(item);
+                            searchController.clear();
+                            setState(() {});
+                          },
                         ),
+                      )
+                      .toList(),
+                ),
 
-                        Text(
-                          "₹$subtotal",
-
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: basket.isEmpty ? null : saveOrder,
-                          child: const Text("Save Order"),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          Expanded(
-            child: orders.isEmpty
-                ? const Center(
-                    child: Text(
-                      "No orders recorded yet",
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: orders.length,
-                    itemBuilder: (context, index) {
-                      final order = orders[index];
-                      return ListTile(
-                        title: Text("Order #${order.id}"),
-                        subtitle: Text(
-                          "Total: ₹${order.total} • Date: ${order.createdAt.toLocal().toString().split('.')[0]}",
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          Expanded(
-            child: filteredItems.isEmpty
-                ? const OrderEmptyState()
-                : ListView.builder(
-                    itemCount: filteredItems.length,
-                    itemBuilder: (_, index) {
-                      final item = filteredItems[index];
-
-                      return OrderProductTile(
-                        item: item,
-                        onTap: () {
-                          addToBasket(item);
-                        },
-                      );
-                    },
-                  ),
+              if (basket.isNotEmpty)
+                OrderBasketPanel(
+                  basket: basket,
+                  subtotal: subtotal,
+                  increaseQty: increaseQty,
+                  decreaseQty: decreaseQty,
+                  onSave: saveOrder,
+                ),
+              Expanded(child: OrderListView(orders: orders)),
+            ],
           ),
         ],
       ),
