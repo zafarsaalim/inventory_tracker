@@ -24,16 +24,15 @@ class _OrderScreenState extends State<OrderScreen> {
   List<OrderItem> basket = [];
   List<Order> orders = [];
   bool isCreatingOrder = false;
+  bool get hasSearchInput {
+    return searchController.text.trim().isNotEmpty;
+  }
+
   @override
   void initState() {
     super.initState();
     loadItems();
     loadOrders();
-    searchController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
   }
 
   Future<void> loadOrders() async {
@@ -49,22 +48,28 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   void addToBasket(Item item) {
-    final existingIndex = basket.indexWhere(
-      (orderItem) => orderItem.item.id == item.id,
-    );
-
     setState(() {
-      if (existingIndex >= 0) {
-        final currentQty = basket[existingIndex].quantity;
+      final index = basket.indexWhere((e) => e.item.id == item.id);
 
-        if (currentQty < item.quantity) {
-          basket[existingIndex].quantity++;
-        }
-      } else {
+      if (index == -1) {
+        // first time add
         if (item.quantity > 0) {
           basket.add(OrderItem(item: item, quantity: 1));
         }
+        return;
       }
+
+      final current = basket[index];
+
+      // HARD LIMIT CHECK (always deterministic)
+      if (current.quantity >= item.quantity) {
+        return;
+      }
+
+      basket[index] = OrderItem(
+        item: current.item,
+        quantity: current.quantity + 1,
+      );
     });
   }
 
@@ -140,46 +145,48 @@ class _OrderScreenState extends State<OrderScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            isCreatingOrder = true;
-            searchController.clear();
+            isCreatingOrder = !isCreatingOrder;
+
+            // reset only when leaving create mode
+            if (!isCreatingOrder) {
+              basket.clear();
+              searchController.clear();
+            }
           });
         },
-        child: Icon(isCreatingOrder ? Icons.shopping_cart : Icons.add),
+        child: Icon(isCreatingOrder ? Icons.close : Icons.add),
       ),
-      body: Column(
-        children: [
-          Column(
-            children: [
-              OrderSearchBar(controller: searchController),
-              if (isCreatingOrder)
-                Column(
-                  children: filteredProducts
-                      .map(
-                        (item) => ListTile(
-                          title: Text(item.name),
-                          onTap: () {
-                            addToBasket(item);
-                            searchController.clear();
-                            setState(() {});
-                          },
-                        ),
-                      )
-                      .toList(),
-                ),
+      body: isCreatingOrder
+          ? Column(
+              children: [
+                OrderSearchBar(controller: searchController),
+                if (hasSearchInput)
+                  Column(
+                    children: filteredProducts
+                        .map(
+                          (item) => ListTile(
+                            title: Text(item.name),
+                            onTap: () {
+                              addToBasket(item);
+                              searchController.clear();
+                              setState(() {});
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
 
-              if (basket.isNotEmpty)
-                OrderBasketPanel(
-                  basket: basket,
-                  subtotal: subtotal,
-                  increaseQty: increaseQty,
-                  decreaseQty: decreaseQty,
-                  onSave: saveOrder,
-                ),
-              Expanded(child: OrderListView(orders: orders)),
-            ],
-          ),
-        ],
-      ),
+                if (basket.isNotEmpty)
+                  OrderBasketPanel(
+                    basket: basket,
+                    subtotal: subtotal,
+                    increaseQty: increaseQty,
+                    decreaseQty: decreaseQty,
+                    onSave: saveOrder,
+                  ),
+              ],
+            )
+          : OrderListView(orders: orders),
     );
   }
 }
