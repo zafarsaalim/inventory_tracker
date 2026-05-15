@@ -4,7 +4,7 @@ import '../data/db_helper.dart';
 
 import '../models/item.dart';
 import '../models/order_item.dart';
-
+import '../models/order.dart';
 import '../widgets/order_basket_item.dart';
 import '../widgets/order_empty_state.dart';
 import '../widgets/order_product_tile.dart';
