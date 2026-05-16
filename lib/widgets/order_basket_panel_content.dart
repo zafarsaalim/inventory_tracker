@@ -23,20 +23,32 @@ class OrderBasketPanel extends StatelessWidget {
     if (basket.isEmpty) return const SizedBox.shrink();
 
     return Material(
-        elevation: 8,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ...List.generate(basket.length, (index) {
-                final item = basket[index];
+      elevation: 8,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ...List.generate(basket.length, (index) {
+              final item = basket[index];
 
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
                   children: [
-                    Expanded(child: Text(item.item.name)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.item.name),
+                          Text(
+                            '₹${item.item.sellingPrice ?? 0} x ${item.quantity}',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.remove),
                       onPressed: () => decreaseQty(index),
@@ -46,27 +58,31 @@ class OrderBasketPanel extends StatelessWidget {
                       icon: const Icon(Icons.add),
                       onPressed: () => increaseQty(index),
                     ),
+                    SizedBox(
+                      width: 60,
+                      child: Text(
+                        '₹${item.subtotal}',
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
                   ],
-                );
-              }),
-              const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Total: ₹$subtotal",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  ElevatedButton(
-                    onPressed: onSave,
-                    child: const Text("Save"),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              );
+            }),
+            const Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Total: ₹$subtotal",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton(onPressed: onSave, child: const Text("Save")),
+              ],
+            ),
+          ],
         ),
-      );
-    
+      ),
+    );
   }
 }
