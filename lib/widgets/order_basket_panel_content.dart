@@ -22,11 +22,7 @@ class OrderBasketPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     if (basket.isEmpty) return const SizedBox.shrink();
 
-    return Positioned(
-      bottom: 80,
-      left: 12,
-      right: 12,
-      child: Material(
+    return Material(
         elevation: 8,
         borderRadius: BorderRadius.circular(12),
         child: Container(
@@ -70,7 +66,7 @@ class OrderBasketPanel extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
+    
   }
 }
