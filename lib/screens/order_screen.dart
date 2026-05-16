@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../data/db_helper.dart';
-
 import '../models/item.dart';
 import '../models/order_item.dart';
 import '../models/order.dart';
@@ -31,6 +29,9 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   void initState() {
     super.initState();
+    searchController.addListener(() {
+  setState(() {});
+});
     loadItems();
     loadOrders();
   }
