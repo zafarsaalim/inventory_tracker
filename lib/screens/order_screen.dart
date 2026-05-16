@@ -30,8 +30,8 @@ class _OrderScreenState extends State<OrderScreen> {
   void initState() {
     super.initState();
     searchController.addListener(() {
-  setState(() {});
-});
+      setState(() {});
+    });
     loadItems();
     loadOrders();
   }
@@ -169,8 +169,9 @@ class _OrderScreenState extends State<OrderScreen> {
                             title: Text(item.name),
                             onTap: () {
                               addToBasket(item);
-                              searchController.clear();
-                              setState(() {});
+                              if (basket.isNotEmpty) {
+                                searchController.clear();
+                              }
                             },
                           ),
                         )
