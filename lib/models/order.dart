@@ -1,4 +1,3 @@
-
 class Order {
   final int id;
   final int total;

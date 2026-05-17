@@ -23,10 +23,7 @@ class OrderListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final order = orders[index];
         return Card(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 4,
-          ),
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: ListTile(
             title: Text("Order #${order.id ?? index + 1}"),
             subtitle: Text("Total: ₹${order.total}"),

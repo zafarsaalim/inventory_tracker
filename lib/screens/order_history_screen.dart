@@ -11,11 +11,16 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   List<Map<String, dynamic>> orders = [];
 
   @override
-  void initState() {super.initState(); loadOrders();}
+  void initState() {
+    super.initState();
+    loadOrders();
+  }
 
   Future<void> loadOrders() async {
     final data = await DBHelper.getOrders();
-    setState(() {orders = data;});
+    setState(() {
+      orders = data;
+    });
   }
 
   @override
@@ -30,7 +35,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 final order = orders[index];
                 return Card(
                   margin: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 6,
+                    horizontal: 12,
+                    vertical: 6,
                   ),
                   child: ListTile(
                     title: Text("Order #${order['id']}"),

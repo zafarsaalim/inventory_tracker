@@ -21,6 +21,21 @@ class _AddItemSheetState extends State<AddItemSheet> {
   final costPriceController = TextEditingController();
   final sellingPriceController = TextEditingController();
   //
+  Future<void> handleBarcode(String code) async {
+    final existingItem = await DBHelper.getByBarcode(code);
+
+    if (existingItem != null) {
+      final updatedQty = existingItem.quantity + 1;
+
+      await DBHelper.updateQuantity(existingItem.id!, updatedQty);
+    } else {
+      setState(() {
+        barcodeController.text = code;
+      });
+    }
+  }
+
+  //
   @override
   void initState() {
     super.initState();
@@ -101,26 +116,7 @@ class _AddItemSheetState extends State<AddItemSheet> {
                   MaterialPageRoute(
                     builder: (_) => BarcodeScanner(
                       onDetect: (code) async {
-                        final existingItem = await DBHelper.getByBarcode(code);
-
-                        if (existingItem != null) {
-                          // CASE 1: ITEM EXISTS → update stock
-                          final updatedQty = existingItem.quantity + 1;
-
-                          await DBHelper.updateQuantity(
-                            existingItem.id!,
-                            updatedQty,
-                          );
-
-                          //Navigator.pop(context);
-                        } else {
-                          // CASE 2: NEW ITEM → just fill form
-                          setState(() {
-                            barcodeController.text = code;
-                          });
-
-                          // Navigator.pop(context);
-                        }
+                        await handleBarcode(code);
                       },
                     ),
                   ),
