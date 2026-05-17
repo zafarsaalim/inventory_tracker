@@ -3,7 +3,7 @@ name: Build APK (Lightweight)
 on:
   workflow_dispatch:
   push:
-    branches: ["main", "barcode-scan-feature"]
+    branches: ["main", "barcode-scan-feature", "expense-tracker"]
 
 jobs:
   build:
@@ -35,5 +35,5 @@ jobs:
       - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: inventory-apk
+          name: expense-tracker-apk
           path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
