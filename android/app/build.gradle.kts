@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.expene_tracker"
+    namespace = "com.example.expense_tracker"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
