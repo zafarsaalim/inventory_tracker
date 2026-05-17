@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-import 'screens/main_navigation.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ExpenseApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ExpenseApp extends StatelessWidget {
+  const ExpenseApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const MainNavigation(),
+      title: 'Expense Tracker',
+      theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
+      home: const HomeScreen(),
     );
   }
 }
