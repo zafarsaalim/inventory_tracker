@@ -58,6 +58,16 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             icon: const Icon(Icons.upload_file),
           ),
+          IconButton(
+    onPressed: () async {
+      await CSVService.exportCSV();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("CSV Exported Successfully")),
+      );
+    },
+    icon: const Icon(Icons.download),
+  ),
         ],
       ),
       body: Padding(

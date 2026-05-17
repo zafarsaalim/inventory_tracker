@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import '../db/db_helper.dart';
 import '../models/expense.dart';
 
@@ -25,6 +26,31 @@ class CSVService {
           date: row[2].toString(),
         ),
       );
+    }
+  }
+  static Future<void> exportCSV() async {
+    try {
+      final expenses = await DBHelper.getExpenses();
+
+      List<List<dynamic>> rows = [
+        ["Item", "Amount", "Date"], // header
+      ];
+
+      for (var e in expenses) {
+        rows.add([e.item, e.amount, e.date]);
+      }
+
+      String csv = const ListToCsvConverter().convert(rows);
+
+      final dir = await getExternalStorageDirectory();
+      // final path = "${dir!.path}/expenses_${DateTime.now().millisecondsSinceEpoch}.csv";
+      final path = "/storage/emulated/0/Download/expenses_${DateTime.now().millisecondsSinceEpoch}.csv";
+      final file = File(path);
+      await file.writeAsString(csv);
+
+      print("Exported to: $path");
+    } catch (e) {
+      print("Export error: $e");
     }
   }
 }
