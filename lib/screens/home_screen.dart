@@ -5,6 +5,7 @@ import '../services/csv_service.dart';
 import '../widgets/budget_card.dart';
 import '../widgets/expense_card.dart';
 import '../widgets/summary_card.dart';
+import '../widgets/today_expense_card.dart';
 import 'add_expense_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,6 +34,19 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+  double getTodayExpense() {
+    final now = DateTime.now();
+
+    return expenses
+        .where((e) {
+          final date = DateTime.parse(e.date);
+          return date.year == now.year &&
+              date.month == now.month &&
+              date.day == now.day;
+        })
+        .fold(0.0, (sum, item) => sum + item.amount);
+  }
+
   void search(String value) {
     filtered = expenses.where((e) {
       return e.item.toLowerCase().contains(value.toLowerCase());
@@ -59,19 +73,19 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.upload_file),
           ),
           IconButton(
-    onPressed: () async {
-      await CSVService.exportCSV();
+            onPressed: () async {
+              await CSVService.exportCSV();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("CSV Exported Successfully")),
-      );
-    },
-    icon: const Icon(Icons.download),
-  ),
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("CSV Exported Successfully")),
+              );
+            },
+            icon: const Icon(Icons.download),
+          ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
@@ -88,7 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SizedBox(height: 12),
             SummaryCard(total: totalExpense),
-
+            const SizedBox(height: 8),
+            TodayExpenseCard(amount: getTodayExpense()),
+            const SizedBox(height: 8),
             BudgetCard(budget: budget, used: totalExpense),
 
             const SizedBox(height: 12),

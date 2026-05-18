@@ -28,6 +28,7 @@ class CSVService {
       );
     }
   }
+
   static Future<void> exportCSV() async {
     try {
       final expenses = await DBHelper.getExpenses();
@@ -44,7 +45,8 @@ class CSVService {
 
       final dir = await getExternalStorageDirectory();
       // final path = "${dir!.path}/expenses_${DateTime.now().millisecondsSinceEpoch}.csv";
-      final path = "/storage/emulated/0/Download/expenses_${DateTime.now().millisecondsSinceEpoch}.csv";
+      final path =
+          "/storage/emulated/0/Download/expenses_${DateTime.now().millisecondsSinceEpoch}.csv";
       final file = File(path);
       await file.writeAsString(csv);
 

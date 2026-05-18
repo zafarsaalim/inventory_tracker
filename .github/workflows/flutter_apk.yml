@@ -27,7 +27,21 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+      # ✅ Recreate your keystore from GitHub Secret
+      - name: Setup keystore
+        run: |
+          mkdir -p ~/.android
+          echo "${{ secrets.DEBUG_KEYSTORE }}" | base64 --decode > ~/.android/debug.keystore
 
+      # ✅ (Optional but useful) Check keystore exists
+      - name: Verify keystore
+        run: |
+          if [ -f ~/.android/debug.keystore ]; then
+            echo "Keystore found ✅"
+          else
+            echo "Keystore missing ❌"
+            exit 1
+          fi
       # 🟢 LIGHTWEIGHT BUILD (your requirement)
       - name: Build APK (fast profile build)
         run: flutter build apk --release --split-per-abi

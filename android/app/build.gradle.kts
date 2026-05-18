@@ -30,11 +30,30 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+
+        // Release signing config used for production APK builds
+        create("release") {
+
+            // Path where GitHub Actions will place the keystore
+            // This file is created dynamically during workflow
+            storeFile = file("/home/runner/.android/debug.keystore")
+
+            // Default password used for debug keystore
+            storePassword = "android"
+
+            // Default alias for debug key
+            keyAlias = "androiddebugkey"
+
+            // Default key password for debug keystore
+            keyPassword = "android"
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
