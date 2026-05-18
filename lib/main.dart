@@ -7,7 +7,6 @@ void main() {
 
 class ExpenseApp extends StatelessWidget {
   const ExpenseApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
