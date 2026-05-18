@@ -40,6 +40,7 @@ class _HomeViewState extends State<HomeView> {
             icon: const Icon(Icons.upload_file),
             onPressed: () async {
               await CSVService.importItems();
+              await loadItems();
               if (!mounted) return;
               ScaffoldMessenger.of(
                 context,
