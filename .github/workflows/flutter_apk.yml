@@ -3,7 +3,7 @@ name: Build APK (Lightweight)
 on:
   workflow_dispatch:
   push:
-    branches: ["main", "barcode-scan-feature", "expense-tracker"]
+    branches: ["main", "barcode-scan-feature", "expense-tracker", "signed-app"]
 
 jobs:
   build:
