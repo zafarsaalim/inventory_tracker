@@ -5,6 +5,7 @@ import '../widgets/empty_inventory.dart';
 import '../widgets/inventory_search_bar.dart';
 import '../widgets/inventory_summary.dart';
 import '../widgets/item_card.dart';
+import '../services/csv_service.dart';
 
 class HomeView extends StatefulWidget {
   final List<Item> items;
@@ -32,7 +33,31 @@ class _HomeViewState extends State<HomeView> {
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Inventory")),
+      appBar: AppBar(
+        title: const Text("Inventory"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.upload_file),
+            onPressed: () async {
+              await CSVService.importItems();
+              if (!mounted) return;
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text("CSV Imported")));
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.download),
+            onPressed: () async {
+              await CSVService.exportItems();
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("CSV Exported to Downloads")),
+              );
+            },
+          ),
+        ],
+      ),
 
       body: widget.items.isEmpty
           ? EmptyInventory(onAdd: widget.onAdd)
