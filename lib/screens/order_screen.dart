@@ -77,8 +77,16 @@ class _OrderScreenState extends State<OrderScreen> {
           OrderBasketPanel(
             basket: service.basket,
             subtotal: subtotal,
-            increaseQty: service.increaseQty,
-            decreaseQty: service.decreaseQty,
+            increaseQty: (index) {
+              setState(() {
+                service.increaseQty(index);
+              });
+            },
+            decreaseQty: (index) {
+              setState(() {
+                service.decreaseQty(index);
+              });
+            },
             onSave: saveOrder,
           ),
       ],
@@ -91,8 +99,10 @@ class _OrderScreenState extends State<OrderScreen> {
         return ListTile(
           title: Text(item.name),
           onTap: () {
-            service.addToBasket(item);
-            searchController.clear();
+            setState(() {
+              service.addToBasket(item);
+              searchController.clear();
+            });
           },
         );
       }).toList(),
