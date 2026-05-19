@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class BaseSearchField extends StatelessWidget {
   final TextEditingController? controller;
   final Function(String)? onChanged;

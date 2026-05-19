@@ -11,7 +11,7 @@ class HomeView extends StatefulWidget {
   final List<Item> items;
   final Function() onAdd;
   final Function(Item) onEdit;
-  final Future<void> Function() onReload;
+  final Future<void> Function() onRefresh;
   const HomeView({
     super.key,
     required this.items,
