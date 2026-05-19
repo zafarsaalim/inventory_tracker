@@ -22,9 +22,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> loadItems() async {
-    items = await DBHelper.getItems();
-
-    setState(() {});
+    final data = await DBHelper.getItems();
+    if (!mounted) return;
+    setState(() {
+      items = data;
+    });
   }
 
   void handleAdd([Item? item]) {
@@ -33,6 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return HomeView(items: items, onAdd: handleAdd, onEdit: handleAdd);
+    return HomeView(
+      items: items,
+      onAdd: handleAdd,
+      onEdit: handleAdd,
+      onRefresh: loadItems,
+    );
   }
 }

@@ -3,7 +3,7 @@ import '../data/db_helper.dart';
 import '../models/item.dart';
 import '../models/order.dart';
 import '../widgets/order_basket_panel_content.dart';
-import '../widgets/order_search_bar.dart';
+import '../widgets/product_search_bar.dart';
 import '../widgets/order_list_view.dart';
 import '../services/order_service.dart';
 
@@ -69,7 +69,7 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget _buildCreateOrderView() {
     return Column(
       children: [
-        OrderSearchBar(controller: searchController),
+        ProductSearchBar(controller: searchController),
 
         if (hasSearchInput) _buildSearchResults(),
 

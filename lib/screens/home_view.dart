@@ -11,12 +11,13 @@ class HomeView extends StatefulWidget {
   final List<Item> items;
   final Function() onAdd;
   final Function(Item) onEdit;
-
+  final Future<void> Function() onReload;
   const HomeView({
     super.key,
     required this.items,
     required this.onAdd,
     required this.onEdit,
+    required this.onRefresh,
   });
 
   @override
@@ -40,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
             icon: const Icon(Icons.upload_file),
             onPressed: () async {
               await CSVService.importItems();
-              await loadItems();
+              await widget.onRefresh();
               if (!mounted) return;
               ScaffoldMessenger.of(
                 context,
