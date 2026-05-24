@@ -59,12 +59,9 @@ class _OrderScreenState extends State<OrderScreen> {
   List<Item> get filteredProducts {
     final query = searchController.text.toLowerCase();
     if (query.isEmpty) return [];
-
     return items.where((item) {
       final nameMatch = item.name.toLowerCase().contains(query);
-
       final barcodeMatch = item.barcode?.toLowerCase().contains(query) ?? false;
-
       return nameMatch || barcodeMatch;
     }).toList();
   }
@@ -79,7 +76,7 @@ class _OrderScreenState extends State<OrderScreen> {
           onScanTap: () async {
             final barcode = await Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const ScanPage()),
+              MaterialPageRoute(builder: (_) => ScanPage()),
             );
 
             if (barcode != null) {

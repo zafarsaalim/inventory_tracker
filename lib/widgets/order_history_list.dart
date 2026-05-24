@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../models/order.dart';
 
 class OrderHistoryList extends StatefulWidget {
-  final List<Map<String, dynamic>> orders;
+  final List<Order> orders;
 
   const OrderHistoryList({super.key, required this.orders});
 
@@ -17,7 +18,6 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
   void initState() {
     super.initState();
     filteredOrders = widget.orders;
-
     searchController.addListener(filterOrders);
   }
 
@@ -95,12 +95,12 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
                         vertical: 6,
                       ),
                       child: ListTile(
-                        title: Text("Order #${order['id']}"),
+                        title: Text("Order #${order.id}"),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("₹${order['total']}"),
-                            Text(order['createdAt'] ?? 'N/A'),
+                            Text("₹${order.total}"),
+                            Text(order.createdAt),
                           ],
                         ),
                         trailing: const Icon(Icons.receipt_long),
