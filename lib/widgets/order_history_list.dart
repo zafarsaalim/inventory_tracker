@@ -11,7 +11,7 @@ class OrderHistoryList extends StatefulWidget {
 }
 
 class _OrderHistoryListState extends State<OrderHistoryList> {
-  late List<Map<String, dynamic>> filteredOrders;
+  late List<Order> filteredOrders;
   final TextEditingController searchController = TextEditingController();
 
   @override
@@ -26,19 +26,24 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
 
     setState(() {
       filteredOrders = widget.orders.where((order) {
-        final id = order['id'].toString();
-        final total = order['total'].toString();
-        final date = (order['createdAt'] ?? '').toString();
+        final id = order.id.toString();
+        final total = order.total.toString();
+        final date = order.createdAt.toLowerCase();
 
         return id.contains(query) ||
             total.contains(query) ||
-            date.toLowerCase().contains(query);
+            date.contains(query);
       }).toList();
     });
   }
 
-  int get totalSales =>
-      widget.orders.fold(0, (sum, o) => sum + (o['total'] as int));
+  int get totalSales => widget.orders.fold(0, (sum, o) => sum + o.total);
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

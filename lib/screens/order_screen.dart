@@ -7,6 +7,7 @@ import '../widgets/product_search_bar.dart';
 import '../widgets/order_list_view.dart';
 import '../services/order_service.dart';
 import '../widgets/order_history_list.dart';
+import '../widgets/barcode_scanner.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
@@ -74,14 +75,18 @@ class _OrderScreenState extends State<OrderScreen> {
         ProductSearchBar(
           controller: searchController,
           onScanTap: () async {
-            final barcode = await Navigator.push(
+            await Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => ScanPage()),
+              MaterialPageRoute(
+                builder: (_) => BarcodeScanner(
+                  onDetect: (code) {
+                    setState(() {
+                      searchController.text = code;
+                    });
+                  },
+                ),
+              ),
             );
-
-            if (barcode != null) {
-              searchController.text = barcode;
-            }
           },
         ),
 
