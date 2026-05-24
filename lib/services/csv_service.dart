@@ -47,16 +47,16 @@ class CSVService {
   }
 
   /// IMPORT CSV
-  static Future<void> importItems() async {
+  static Future<bool> importItems() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    if (result == null) return;
+    if (result == null) return false;
 
     final file = File(result.files.single.path!);
     final csvString = await file.readAsString();
 
     List<List<dynamic>> rows = const CsvToListConverter().convert(csvString);
-
+    if (rows.length <= 1) return false;
     for (int i = 1; i < rows.length; i++) {
       final row = rows[i];
 
@@ -81,5 +81,6 @@ class CSVService {
 
       await DBHelper.insertItem(item);
     }
+    return true;
   }
 }

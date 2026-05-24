@@ -8,9 +8,6 @@ class InventorySearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseSearchField(
-      hint: "Search inventory...",
-      onChanged: onChanged,
-    );
+    return BaseSearchField(hint: "Search inventory...", onChanged: onChanged);
   }
 }

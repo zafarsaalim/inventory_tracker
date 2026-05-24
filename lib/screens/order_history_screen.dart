@@ -115,9 +115,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("Total: ₹${order['total']}"),
-                              Text(
-                                "Date: ${order['createdAt'] ?? 'N/A'}",
-                              ),
+                              Text("Date: ${order['createdAt'] ?? 'N/A'}"),
                             ],
                           ),
 

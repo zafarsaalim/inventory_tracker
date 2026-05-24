@@ -40,9 +40,14 @@ class _HomeViewState extends State<HomeView> {
           IconButton(
             icon: const Icon(Icons.upload_file),
             onPressed: () async {
-              await CSVService.importItems();
+              final imported = await CSVService.importItems();
+
+              if (!imported) return;
+
               await widget.onRefresh();
+
               if (!mounted) return;
+
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(const SnackBar(content: Text("CSV Imported")));

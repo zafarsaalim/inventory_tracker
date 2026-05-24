@@ -6,6 +6,7 @@ import '../widgets/order_basket_panel_content.dart';
 import '../widgets/product_search_bar.dart';
 import '../widgets/order_list_view.dart';
 import '../services/order_service.dart';
+import '../widgets/order_history_list.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
@@ -59,9 +60,13 @@ class _OrderScreenState extends State<OrderScreen> {
     final query = searchController.text.toLowerCase();
     if (query.isEmpty) return [];
 
-    return items
-        .where((item) => item.name.toLowerCase().contains(query))
-        .toList();
+    return items.where((item) {
+      final nameMatch = item.name.toLowerCase().contains(query);
+
+      final barcodeMatch = item.barcode?.toLowerCase().contains(query) ?? false;
+
+      return nameMatch || barcodeMatch;
+    }).toList();
   }
 
   int get subtotal => service.subtotal;
@@ -69,7 +74,19 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget _buildCreateOrderView() {
     return Column(
       children: [
-        ProductSearchBar(controller: searchController),
+        ProductSearchBar(
+          controller: searchController,
+          onScanTap: () async {
+            final barcode = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ScanPage()),
+            );
+
+            if (barcode != null) {
+              searchController.text = barcode;
+            }
+          },
+        ),
 
         if (hasSearchInput) _buildSearchResults(),
 
@@ -128,7 +145,7 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
       body: isCreatingOrder
           ? _buildCreateOrderView()
-          : OrderListView(orders: orders),
+          : OrderHistoryList(orders: orders),
     );
   }
 }

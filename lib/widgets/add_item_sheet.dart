@@ -16,6 +16,7 @@ class AddItemSheet extends StatefulWidget {
 class _AddItemSheetState extends State<AddItemSheet> {
   final nameController = TextEditingController();
   final qtyController = TextEditingController();
+  final minStockController = TextEditingController();
   final categoryController = TextEditingController();
   final barcodeController = TextEditingController();
   final costPriceController = TextEditingController();
@@ -45,6 +46,7 @@ class _AddItemSheetState extends State<AddItemSheet> {
 
       nameController.text = item.name;
       qtyController.text = item.quantity.toString();
+      minStockController.text = item.minStockLevel?.toString() ?? "";
       categoryController.text = item.category;
       barcodeController.text = item.barcode ?? "";
       costPriceController.text = item.costPrice?.toString() ?? "";
@@ -53,10 +55,27 @@ class _AddItemSheetState extends State<AddItemSheet> {
   }
 
   //
+  @override
+  void dispose() {
+    nameController.dispose();
+    qtyController.dispose();
+    categoryController.dispose();
+    barcodeController.dispose();
+    costPriceController.dispose();
+    sellingPriceController.dispose();
+    minStockController.dispose();
+    super.dispose();
+  }
+
+  //
   void submit() {
     final item = {
       "name": nameController.text.trim(),
       "quantity": int.tryParse(qtyController.text) ?? 0,
+      "minStockLevel": minStockController.text.isEmpty
+          ? null
+          : int.tryParse(minStockController.text),
+
       "category": categoryController.text.trim().isEmpty
           ? "General"
           : categoryController.text.trim(),
@@ -128,7 +147,14 @@ class _AddItemSheetState extends State<AddItemSheet> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: "Quantity"),
             ),
-
+            TextField(
+              controller: minStockController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Min Stock Level",
+                hintText: "Alert when stock goes below this",
+              ),
+            ),
             TextField(
               controller: categoryController,
               decoration: const InputDecoration(labelText: "Category"),
