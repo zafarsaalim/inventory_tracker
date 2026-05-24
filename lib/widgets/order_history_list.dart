@@ -28,8 +28,7 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
       filteredOrders = widget.orders.where((order) {
         final id = order.id.toString();
         final total = order.total.toString();
-        final date = order.createdAt.toLowerCase();
-
+        final date = order.createdAt.toString().toLowerCase();
         return id.contains(query) ||
             total.contains(query) ||
             date.contains(query);
@@ -105,7 +104,7 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("₹${order.total}"),
-                            Text(order.createdAt),
+                            Text(order.createdAt.toString()),
                           ],
                         ),
                         trailing: const Icon(Icons.receipt_long),
