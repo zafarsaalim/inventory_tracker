@@ -10,12 +10,14 @@ import '../services/csv_service.dart';
 class HomeView extends StatefulWidget {
   final List<Item> items;
   final Function() onAdd;
+  final Function(Item) onDelete;
   final Function(Item) onEdit;
   final Future<void> Function() onRefresh;
   const HomeView({
     super.key,
     required this.items,
     required this.onAdd,
+    required this.onDelete,
     required this.onEdit,
     required this.onRefresh,
   });
@@ -26,11 +28,19 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   String search = "";
-
+  bool showLowStock = false;
   @override
   Widget build(BuildContext context) {
     final filteredItems = widget.items.where((item) {
-      return item.name.toLowerCase().contains(search.toLowerCase());
+      final matchSearch = item.name.toLowerCase().contains(
+        search.toLowerCase(),
+      );
+
+      final matchStock =
+          !showLowStock ||
+          (item.minStockLevel != null && item.quantity <= item.minStockLevel!);
+
+      return matchSearch && matchStock;
     }).toList();
 
     return Scaffold(
@@ -78,7 +88,14 @@ class _HomeViewState extends State<HomeView> {
                   },
                 ),
 
-                InventorySummary(items: widget.items),
+                InventorySummary(
+                  items: widget.items,
+                  onLowStockTap: () {
+                    setState(() {
+                      showLowStock = !showLowStock;
+                    });
+                  },
+                ),
 
                 Expanded(
                   child: filteredItems.isEmpty
@@ -90,6 +107,7 @@ class _HomeViewState extends State<HomeView> {
                               item: filteredItems[index],
 
                               onTap: () => widget.onEdit(filteredItems[index]),
+                              onDelete: widget.onDelete,
                             );
                           },
                         ),

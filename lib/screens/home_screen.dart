@@ -33,11 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
     openAddSheet(context: context, existingItem: item, onSaved: loadItems);
   }
 
+  void handleDelete(Item item) async {
+    await DBHelper.deleteItem(item.id!);
+    loadItems();
+  }
+
   @override
   Widget build(BuildContext context) {
     return HomeView(
       items: items,
       onAdd: handleAdd,
+      onDelete: handleDelete,
       onEdit: handleAdd,
       onRefresh: loadItems,
     );

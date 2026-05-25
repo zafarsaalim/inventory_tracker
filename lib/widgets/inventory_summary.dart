@@ -3,8 +3,12 @@ import '../models/item.dart';
 
 class InventorySummary extends StatelessWidget {
   final List<Item> items;
-
-  const InventorySummary({super.key, required this.items});
+  final VoidCallback onLowStockTap;
+  const InventorySummary({
+    super.key,
+    required this.items,
+    required this.onLowStockTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +47,16 @@ class InventorySummary extends StatelessWidget {
 
           _divider(),
 
-          _buildStat(
-            "Low Stock",
-            lowStock.toString(),
-            valueColor: lowStock > 0 ? Colors.orange : Colors.green,
+          Material(
+            color: Colors.transparent,
+            child: InkResponse(
+              onTap: onLowStockTap,
+              child: _buildStat(
+                "Low Stock",
+                lowStock.toString(),
+                valueColor: lowStock > 0 ? Colors.orange : Colors.green,
+              ),
+            ),
           ),
         ],
       ),

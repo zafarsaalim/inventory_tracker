@@ -14,6 +14,7 @@ class ItemService {
       barcode: item["barcode"],
       costPrice: item["costPrice"],
       sellingPrice: item["sellingPrice"],
+      minStockLevel: item["minStockLevel"],
       createdAt: item["createdAt"],
     );
 
