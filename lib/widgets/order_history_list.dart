@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/order.dart';
 import '../data/db_helper.dart';
+import '../theme/app_colors.dart';
 
 class OrderHistoryList extends StatefulWidget {
   final List<Order> orders;
@@ -168,13 +169,17 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
                       Text(
                         "Orders Δ: ${ordersChange.toStringAsFixed(1)}%",
                         style: TextStyle(
-                          color: ordersChange >= 0 ? Colors.green : Colors.red,
+                          color: ordersChange >= 0
+                              ? AppColors.success
+                              : AppColors.danger,
                         ),
                       ),
                       Text(
                         "Sales Δ: ${salesChange.toStringAsFixed(1)}%",
                         style: TextStyle(
-                          color: salesChange >= 0 ? Colors.green : Colors.red,
+                          color: salesChange >= 0
+                              ? AppColors.success
+                              : AppColors.danger,
                         ),
                       ),
                     ],
@@ -193,7 +198,11 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Icon(Icons.receipt_long, size: 60, color: Colors.grey),
+                    Icon(
+                      Icons.receipt_long,
+                      size: 60,
+                      color: AppColors.textMuted,
+                    ),
                     SizedBox(height: 10),
                     Text("No orders found"),
                   ],
@@ -224,7 +233,7 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
                           "₹${order.total}",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: AppColors.success,
                           ),
                         ),
                       ),

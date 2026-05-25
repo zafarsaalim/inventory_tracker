@@ -1,6 +1,7 @@
 // widgets/order_list_view.dart
 import 'package:flutter/material.dart';
 import '../models/order.dart';
+import '../theme/app_colors.dart';
 
 class OrderListView extends StatelessWidget {
   final List<Order> orders;
@@ -13,7 +14,7 @@ class OrderListView extends StatelessWidget {
       return const Center(
         child: Text(
           "No orders recorded yet",
-          style: TextStyle(fontSize: 18, color: Colors.grey),
+          style: TextStyle(fontSize: 18, color: AppColors.textMuted),
         ),
       );
     }

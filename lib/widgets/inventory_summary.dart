@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/item.dart';
+import '../theme/app_colors.dart';
 
 class InventorySummary extends StatelessWidget {
   final List<Item> items;
@@ -25,12 +26,12 @@ class InventorySummary extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(12, 12, 12, 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             blurRadius: 8,
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.overlay.withOpacity(0.1),
             offset: const Offset(0, 3),
           ),
         ],
@@ -54,7 +55,9 @@ class InventorySummary extends StatelessWidget {
               child: _buildStat(
                 "Low Stock",
                 lowStock.toString(),
-                valueColor: lowStock > 0 ? Colors.orange : Colors.green,
+                valueColor: lowStock > 0
+                    ? AppColors.warning
+                    : AppColors.success,
               ),
             ),
           ),
@@ -64,7 +67,7 @@ class InventorySummary extends StatelessWidget {
   }
 
   Widget _divider() {
-    return Container(width: 1, height: 36, color: Colors.grey.shade300);
+    return Container(width: 1, height: 36, color: AppColors.border);
   }
 
   Widget _buildStat(String label, String value, {Color? valueColor}) {
@@ -82,7 +85,7 @@ class InventorySummary extends StatelessWidget {
 
         const SizedBox(height: 4),
 
-        Text(label, style: const TextStyle(color: Colors.grey)),
+        Text(label, style: const TextStyle(color: AppColors.textMuted)),
       ],
     );
   }

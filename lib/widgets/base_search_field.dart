@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class BaseSearchField extends StatelessWidget {
   final TextEditingController? controller;
@@ -28,7 +29,7 @@ class BaseSearchField extends StatelessWidget {
           prefixIcon: const Icon(Icons.search),
           suffixIcon: suffixIcon,
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppColors.surface,
           contentPadding: const EdgeInsets.symmetric(
             vertical: 0,
             horizontal: 12,

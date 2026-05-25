@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class OrderEmptyState extends StatelessWidget {
   const OrderEmptyState({super.key});
@@ -10,7 +11,11 @@ class OrderEmptyState extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
 
         children: const [
-          Icon(Icons.receipt_long_outlined, size: 70, color: Colors.grey),
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 70,
+            color: AppColors.textMuted,
+          ),
 
           SizedBox(height: 16),
 
@@ -23,7 +28,7 @@ class OrderEmptyState extends StatelessWidget {
 
           Text(
             "Search or scan a product to start",
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: AppColors.textMuted),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class EmptyInventory extends StatelessWidget {
   final VoidCallback onAdd;
@@ -11,7 +12,11 @@ class EmptyInventory extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.inventory_2_outlined, size: 90, color: Colors.grey),
+          const Icon(
+            Icons.inventory_2_outlined,
+            size: 90,
+            color: AppColors.textMuted,
+          ),
           const SizedBox(height: 10),
           const Text(
             "No Inventory Items",
@@ -20,7 +25,7 @@ class EmptyInventory extends StatelessWidget {
           const SizedBox(height: 5),
           const Text(
             "Tap below to add your first item",
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: AppColors.textMuted),
           ),
           const SizedBox(height: 20),
           ElevatedButton.icon(

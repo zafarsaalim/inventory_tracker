@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/item.dart';
+import '../theme/app_colors.dart';
 
 class ItemCard extends StatelessWidget {
   final Item item;
@@ -19,7 +20,7 @@ class ItemCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(Icons.delete, color: AppColors.danger),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -45,7 +46,7 @@ class ItemCard extends StatelessWidget {
                           },
                           child: const Text(
                             "Delete",
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: AppColors.danger),
                           ),
                         ),
                       ],
