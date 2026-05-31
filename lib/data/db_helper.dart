@@ -135,6 +135,16 @@ class DBHelper {
     });
   }
 
+  static Future<List<Map<String, dynamic>>> getOrderItems(int orderId) async {
+    final dbClient = await db;
+
+    return await dbClient.query(
+      'order_items',
+      where: 'orderId = ?',
+      whereArgs: [orderId],
+    );
+  }
+
   static Future<int> deleteOrder(int id) async {
     final dbClient = await db;
 

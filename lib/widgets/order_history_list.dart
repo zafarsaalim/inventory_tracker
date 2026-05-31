@@ -50,30 +50,68 @@ class _OrderHistoryListState extends State<OrderHistoryList> {
     return ((1) / (widget.orders.length - 1)) * 100;
   }
 
-  void showOrderDetails(Order order) {
-    showModalBottomSheet(
+  Future<void> showOrderDetails(Order order) async {
+    final items = await DBHelper.getOrderItems(order.id);
+
+    if (!mounted) return;
+
+    showDialog(
       context: context,
-      builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Order #${order.id}",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+      builder: (_) => AlertDialog(
+        title: Text("Order #${order.id}"),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Date: ${formatDate(order.createdAt)}"),
+
+                const SizedBox(height: 12),
+
+                const Divider(),
+
+                ...items.map((item) {
+                  final price = item['price'] as int;
+                  final qty = item['quantity'] as int;
+                  final total = price * qty;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(child: Text("${item['name']} x$qty")),
+                        Text("₹$total"),
+                      ],
+                    ),
+                  );
+                }),
+
+                const Divider(),
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "Total: ₹${order.total}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text("Total: ₹${order.total}"),
-              Text("Date: ${formatDate(order.createdAt)}"),
-            ],
+              ],
+            ),
           ),
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+        ],
+      ),
     );
   }
 
