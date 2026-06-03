@@ -1,0 +1,32 @@
+name: Compile Local Redactor APK
+on:
+  push:
+    branches: [ python-redactor ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Cache Buildozer global directories
+      uses: actions/cache@v4
+      with:
+        path: .buildozer-global
+        key: buildozer-global-${{ hashFiles('python_app/buildozer.spec') }}
+
+    - name: Build Android APK with Buildozer
+      uses: ArtemSBulgakov/buildozer-action@v1
+      id: buildozer
+      with:
+        command: buildozer android debug
+        workdir: python_app
+        buildozer_version: stable
+
+    - name: Upload Finished APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Local-Redactor-Android-App
+        path: python_app/bin/*.apk
