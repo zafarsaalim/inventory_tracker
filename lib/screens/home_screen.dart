@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../db/db_helper.dart';
 import '../models/expense.dart';
 import '../services/csv_service.dart';
@@ -21,6 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final searchController = TextEditingController();
   double budget = 5000;
 
+  DateTime? startDate;
+  DateTime? endDate;
+
   @override
   void initState() {
     super.initState();
@@ -28,9 +32,38 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> loadExpenses() async {
-    expenses = await DBHelper.getExpenses();
-    filtered = expenses;
-    setState(() {});
+    String? startStr = startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : null;
+    String? endStr = endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : null;
+
+    expenses = await DBHelper.getExpenses(startDate: startStr, endDate: endStr);
+    search(searchController.text);
+  }
+
+  Future<void> _selectDateRange() async {
+    DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDateRange: startDate != null && endDate != null
+          ? DateTimeRange(start: startDate!, end: endDate!)
+          : null,
+    );
+
+    if (picked != null) {
+      setState(() {
+        startDate = picked.start;
+        endDate = picked.end;
+      });
+      loadExpenses();
+    }
+  }
+
+  void _clearDateFilter() {
+    setState(() {
+      startDate = null;
+      endDate = null;
+    });
+    loadExpenses();
   }
 
   void search(String value) {
@@ -59,21 +92,21 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.upload_file),
           ),
           IconButton(
-    onPressed: () async {
-      await CSVService.exportCSV();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("CSV Exported Successfully")),
-      );
-    },
-    icon: const Icon(Icons.download),
-  ),
+            onPressed: () async {
+              await CSVService.exportCSV();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("CSV Exported Successfully")),
+              );
+            },
+            icon: const Icon(Icons.download),
+          ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
+            // Search Bar
             TextField(
               controller: searchController,
               onChanged: search,
@@ -84,6 +117,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+            ),
+            const SizedBox(height: 8),
+
+            // Date Range Filter Bar
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _selectDateRange,
+                    icon: const Icon(Icons.date_range, size: 18),
+                    label: Text(
+                      startDate == null || endDate == null
+                          ? "Filter by Date Range"
+                          : "${DateFormat('dd MMM').format(startDate!)} - ${DateFormat('dd MMM').format(endDate!)}",
+                    ),
+                  ),
+                ),
+                if (startDate != null && endDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.clear, color: Colors.red),
+                    onPressed: _clearDateFilter,
+                    tooltip: "Clear Date Filter",
+                  ),
+              ],
             ),
 
             const SizedBox(height: 12),
@@ -96,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: filtered.isEmpty
                   ? const Center(
                       child: Text(
-                        "No records.\nAdd expenses.",
+                        "No records found.\nAdd expenses or change filter.",
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -105,12 +162,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         final expense = filtered[index];
 
-                        return ExpenseCard(
-                          expense: expense,
-                          onDelete: () async {
-                            await DBHelper.deleteExpense(expense.id!);
-                            loadExpenses();
-                          },
+                        // Subtle alternate row shading
+                        final bool isEven = index % 2 == 0;
+                        final Color? rowColor = isEven
+                            ? Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3)
+                            : null;
+
+                        return Container(
+                          color: rowColor,
+                          child: ExpenseCard(
+                            expense: expense,
+                            onDelete: () async {
+                              await DBHelper.deleteExpense(expense.id!);
+                              loadExpenses();
+                            },
+                          ),
                         );
                       },
                     ),
@@ -118,7 +184,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result = await Navigator.push(

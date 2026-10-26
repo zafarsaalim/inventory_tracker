@@ -35,11 +35,36 @@ class DBHelper {
     return await db.insert('expenses', expense.toMap());
   }
 
-  static Future<List<Expense>> getExpenses() async {
+  // Bulk insert function
+  static Future<void> insertMultipleExpenses(List<Expense> expenses) async {
     final db = await database;
+    await db.transaction((txn) async {
+      for (var expense in expenses) {
+        await txn.insert(
+          'expenses',
+          expense.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    });
+  }
+
+  // Updated to support optional date range filtering
+  static Future<List<Expense>> getExpenses({String? startDate, String? endDate}) async {
+    final db = await database;
+
+    String? whereClause;
+    List<dynamic>? whereArgs;
+
+    if (startDate != null && endDate != null) {
+      whereClause = 'date BETWEEN ? AND ?';
+      whereArgs = [startDate, endDate];
+    }
 
     final List<Map<String, dynamic>> maps = await db.query(
       'expenses',
+      where: whereClause,
+      whereArgs: whereArgs,
       orderBy: 'date DESC',
     );
 
