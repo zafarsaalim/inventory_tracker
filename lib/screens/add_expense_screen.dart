@@ -154,7 +154,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
             // Queue Header & Summary
             Row(
-              mainAxisAlignment: MainAxisAlignment.between,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "Queued Items (${_queue.length})",
